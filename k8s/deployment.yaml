@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fair-rag-dashboard
+  labels:
+    app: fair-rag-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fair-rag-dashboard
+  template:
+    metadata:
+      labels:
+        app: fair-rag-dashboard
+    spec:
+      containers:
+        - name: dashboard
+          image: fair-rag-dashboard:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8501
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          readinessProbe:
+            httpGet:
+              path: /_stcore/health
+              port: 8501
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /_stcore/health
+              port: 8501
+            initialDelaySeconds: 30
+            periodSeconds: 20
